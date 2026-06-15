@@ -1,0 +1,4 @@
+{
+  "name": "begin-skills-connector",
+  "description": "Two slash commands for Begin employees to share Claude Code skills: /skill-sync installs/updates the team's reviewed skills, /skill-publish packages a local skill and opens a PR for review. Authenticates to a Cloudflare Worker via Cloudflare Access (Google SSO)."
+}

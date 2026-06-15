@@ -1,0 +1,14 @@
+{
+  "name": "begin-connector",
+  "owner": {
+    "name": "Begin",
+    "email": "siim@begin.ee"
+  },
+  "plugins": [
+    {
+      "name": "begin-skills-connector",
+      "source": "./plugins/begin-skills-connector",
+      "description": "Share Begin's team Claude Code skills: /skill-sync to install reviewed skills, /skill-publish to contribute a skill via PR."
+    }
+  ]
+}
