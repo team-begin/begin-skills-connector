@@ -3,9 +3,9 @@
 # Sourced by skill-sync.sh and skill-publish.sh.
 set -euo pipefail
 
-# Documented placeholder default. Override via env BEGIN_SKILLS_WORKER_URL or
-# ~/.config/begin-skills/config (a single line: the worker URL).
-DEFAULT_WORKER_URL="https://begin-skills.example.workers.dev"
+# Default worker URL (the deployed Begin skills worker, behind Cloudflare Access).
+# Override via env BEGIN_SKILLS_WORKER_URL or ~/.config/begin-skills/config.
+DEFAULT_WORKER_URL="https://skills.begin.wtf"
 CONFIG_FILE="${HOME}/.config/begin-skills/config"
 
 # --- output helpers ---------------------------------------------------------
@@ -41,12 +41,6 @@ resolve_worker_url() {
 
   if [ -z "$url" ]; then
     die "Could not resolve worker URL. Set BEGIN_SKILLS_WORKER_URL or write it to $CONFIG_FILE"
-  fi
-
-  if [ "$url" = "$DEFAULT_WORKER_URL" ]; then
-    err "Using placeholder worker URL ($DEFAULT_WORKER_URL)."
-    err "Set the real URL via:  export BEGIN_SKILLS_WORKER_URL=https://<worker>"
-    err "or write it to:        $CONFIG_FILE"
   fi
 
   # strip any trailing slash
