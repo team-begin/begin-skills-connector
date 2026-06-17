@@ -5,7 +5,7 @@ set -euo pipefail
 
 # Default worker URL (the deployed Begin skills worker, behind Cloudflare Access).
 # Override via env BEGIN_SKILLS_WORKER_URL or ~/.config/begin-skills/config.
-DEFAULT_WORKER_URL="https://skills.begin.wtf"
+DEFAULT_WORKER_URL="https://skills.begin.eu"
 CONFIG_FILE="${HOME}/.config/begin-skills/config"
 
 # --- output helpers ---------------------------------------------------------
