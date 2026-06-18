@@ -63,6 +63,22 @@ worker_request() {
 
   require_cmd curl
 
+  # Authenticate to Cloudflare Access: fetch a short-lived token via cloudflared
+  # and attach it as the cf-access-token header. This is robust across cloudflared
+  # versions (the `cloudflared access curl --app=...` form changed and breaks on
+  # newer releases).
+  local access_token=""
+  if command -v cloudflared >/dev/null 2>&1; then
+    access_token="$(cloudflared access token --app="$worker_url" 2>/dev/null || true)"
+    if [ -z "$access_token" ]; then
+      err "Could not get a Cloudflare Access token."
+      err "Log in once with:  cloudflared access login --app=\"$worker_url\""
+    fi
+  else
+    err "cloudflared not found — install it and log in:"
+    err "  brew install cloudflared && cloudflared access login --app=\"$worker_url\""
+  fi
+
   local -a curl_args=(
     -sS
     -X "$method"
@@ -70,18 +86,12 @@ worker_request() {
     -w '%{http_code}'
     -H 'Content-Type: application/json'
   )
+  [ -n "$access_token" ] && curl_args+=(-H "cf-access-token: $access_token")
   if [ -n "$body" ]; then
     curl_args+=(--data-binary "$body")
   fi
 
-  if command -v cloudflared >/dev/null 2>&1; then
-    http_code="$(cloudflared access curl --app="$worker_url" -- "${curl_args[@]}" "$full_url" 2>/dev/null || true)"
-  else
-    err "cloudflared not found — falling back to plain curl (no Google SSO identity attached)."
-    err "Install cloudflared and run:  cloudflared access login --app=\"$worker_url\""
-    err "  macOS:  brew install cloudflared"
-    http_code="$(curl "${curl_args[@]}" "$full_url" || true)"
-  fi
+  http_code="$(curl "${curl_args[@]}" "$full_url" || true)"
 
   if [ -z "$http_code" ]; then
     err "No response from worker at $full_url"
